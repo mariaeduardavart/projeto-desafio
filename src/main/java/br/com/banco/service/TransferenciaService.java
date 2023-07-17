@@ -31,11 +31,11 @@ public class TransferenciaService {
         return transferencias;
     }
 
-    public List<Transferencia> obterTransferenciasPorNomeOperador(String nomeOperador) {
-        List<Transferencia> transferencias = transferenciaRepository.findByNomeOperadorTransacao(nomeOperador);
+    public List<Transferencia> obterTransferenciasPorNomeOperador(String nomeOperadorTransacao) {
+        List<Transferencia> transferencias = transferenciaRepository.findByNomeOperadorTransacao(nomeOperadorTransacao);
     
         if (transferencias.isEmpty()) {
-            throw new NoSuchElementException("Não foram encontradas transferências para o operador: " + nomeOperador);
+            throw new NoSuchElementException("Não foram encontradas transferências para o operador: " + nomeOperadorTransacao);
         }
         
         return transferencias;
