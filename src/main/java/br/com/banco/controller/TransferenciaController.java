@@ -1,9 +1,11 @@
 package br.com.banco.controller;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,12 +23,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 @RestController
 @RequestMapping("/api/transferencia")
+@CrossOrigin(origins = "http://localhost:5173")
 public class TransferenciaController {
 
-     @Autowired
+    @Autowired
     private TransferenciaService transferenciaService;
 
-    
     @GetMapping("/")
     public List<Transferencia> buscarTodas() {
         return transferenciaService.obterTodasTransferencias();
@@ -34,16 +36,17 @@ public class TransferenciaController {
 
     @GetMapping("/por-periodo")
     public List<Transferencia> buscarPorPeriodo(
-            @RequestParam("dataInicial") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")LocalDateTime dataInicial,
-            @RequestParam("dataFinal")  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")LocalDateTime dataFinal
-    ) {
-        return transferenciaService.obterTransferenciasPorPeriodoTempo(dataInicial, dataFinal);
+            @RequestParam("dataInicial") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dataInicial,
+            @RequestParam("dataFinal") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dataFinal) {
+        LocalDateTime dataInicialInicioDia = dataInicial.atStartOfDay();
+        LocalDateTime dataFinalFimDia = dataFinal.atTime(23, 59, 59);
+
+        return transferenciaService.obterTransferenciasPorPeriodoTempo(dataInicialInicioDia, dataFinalFimDia);
     }
 
     @GetMapping("/por-operador")
     public List<Transferencia> buscarPorOperador(
-            @RequestParam("nomeOperadorTransacao") String nomeOperadorTransacao
-    ) {
+            @RequestParam("nomeOperadorTransacao") String nomeOperadorTransacao) {
         return transferenciaService.obterTransferenciasPorNomeOperador(nomeOperadorTransacao);
     }
 
@@ -57,5 +60,5 @@ public class TransferenciaController {
         transferenciaService.excluirTransferencia(id);
         return ResponseEntity.ok().build();
     }
-    
+
 }
